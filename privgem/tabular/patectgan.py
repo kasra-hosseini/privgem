@@ -32,6 +32,11 @@ from .privacy_utils import weights_init, pate, moments_acc
 
 
 class Discriminator(Module):
+    """
+    Credit: This code is based on (with some minor changes):
+            https://github.com/opendp/smartnoise-sdk
+    """
+
     def dragan_penalty(self, real_data, device="cpu", c=10, lambda_=10):
         alpha = torch.rand(real_data.shape[0], 1, device=device).expand(real_data.shape)
         delta = torch.normal(
@@ -77,6 +82,11 @@ class Discriminator(Module):
 
 
 class PATECTGAN(CTGANSynthesizer):
+    """
+    Credit: This code is based on (with some minor changes):
+            https://github.com/opendp/smartnoise-sdk
+    """
+
     def __init__(
         self,
         embedding_dim=128,

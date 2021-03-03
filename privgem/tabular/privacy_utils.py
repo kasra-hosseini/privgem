@@ -15,11 +15,19 @@ import numpy as np
 
 
 def weights_init(m):
+    """
+    Credit: This code is based on (with some minor changes):
+            https://github.com/opendp/smartnoise-sdk
+    """
     if type(m) == nn.Linear:
         nn.init.xavier_uniform_(m.weight)
 
-
 def pate(data, teachers, lap_scale, device="cpu"):
+    """
+    Credit: This code is based on (with some minor changes):
+            https://github.com/opendp/smartnoise-sdk
+    """
+
     num_teachers = len(teachers)
     labels = torch.Tensor(num_teachers, data.shape[0]).type(torch.int64).to(device)
     for i in range(num_teachers):
@@ -38,6 +46,11 @@ def pate(data, teachers, lap_scale, device="cpu"):
 
 
 def moments_acc(num_teachers, votes, lap_scale, l_list, device="cpu"):
+    """
+    Credit: This code is based on (with some minor changes):
+            https://github.com/opendp/smartnoise-sdk
+    """
+
     q = (2 + lap_scale * torch.abs(2 * votes - num_teachers)) / (
         4 * torch.exp(lap_scale * torch.abs(2 * votes - num_teachers))
     ).to(device)
