@@ -19,6 +19,9 @@ Please read the list <ins>carefully and cite the original</ins> codes/papers as 
 
 * **PATE-CTGAN**
     * Based on: https://github.com/opendp/smartnoise-sdk
+* **CTGAN**
+    * Based on: https://github.com/sdv-dev/CTGAN
+    * Notes: currently, we are using `ctgan==0.2.2.dev1`
     
 ## Installation
 
