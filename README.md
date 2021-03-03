@@ -15,7 +15,7 @@
 ## Credits
 
 `privgem` uses codes from several other libraries as listed below.
-Please read the list <ins>carefully and cite the original</ins> codes/papers as well.
+⚠️ Please read the list <ins>carefully and cite the original</ins> codes/papers as well.
 
 * **PATE-CTGAN**
     * Based on: https://github.com/opendp/smartnoise-sdk
