@@ -24,11 +24,11 @@
 `privgem` uses codes from other libraries as listed below.
 ⚠️ Please read the list <ins>carefully and cite the original</ins> codes/papers as well.
 
-* **PATE-CTGAN**
-    * Based on: https://github.com/opendp/smartnoise-sdk
-* **CTGAN**
-    * Based on: https://github.com/sdv-dev/CTGAN
-    * Notes: currently, we are using `ctgan==0.2.2.dev1`
+| Method     	| Original version                                          	| Notes                                       	|
+|------------	|------------------------------------------------------------	|---------------------------------------------	|
+| PATE-CTGAN 	| [smartnoise-sdk](https://github.com/opendp/smartnoise-sdk) 	|                                             	|
+| CTGAN      	| [sdv-dev](https://github.com/sdv-dev/CTGAN)                	| currently, `privgem` uses `ctgan==0.2.2.dev1` |
+
     
 ## Installation
 
