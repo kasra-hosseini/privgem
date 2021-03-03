@@ -14,7 +14,7 @@
 
 ## Credits
 
-`privgem` uses codes from several other libraries as listed below.
+`privgem` uses codes from other libraries as listed below.
 ⚠️ Please read the list <ins>carefully and cite the original</ins> codes/papers as well.
 
 * **PATE-CTGAN**
@@ -53,14 +53,14 @@ git clone https://github.com/kasra-hosseini/privgem.git
 
 ```
 cd /path/to/privgem
-python setup.py install
+pip install -v -e .
 ```
 
 Alternatively:
 
 ```
 cd /path/to/privgem
-pip install -v -e .
+python setup.py install
 ```
 
 * To allow the newly created `privgem_py38` environment to show up in Jupyter Notebook:
@@ -93,25 +93,25 @@ git clone https://github.com/kasra-hosseini/privgem.git
 
 ```
 # Install dependencies
-ctgan==0.2.2.dev1
-opacus==0.9.0
-torch==1.6.0
-jupyterlab
-matplotlib
+pip install ctgan==0.2.2.dev1
+pip install opacus==0.9.0
+pip install torch==1.6.0
+pip install jupyterlab
+pip install matplotlib
 ```
 
 * Finally, install `privgem` library:
 
 ```
 cd /path/to/privgem
-python setup.py install
+pip install -v -e .
 ```
 
 Alternatively:
 
 ```
 cd /path/to/privgem
-pip install -v -e .
+python setup.py install
 ```
 
 * To allow the newly created `privgem_py38` environment to show up in Jupyter Notebook:
