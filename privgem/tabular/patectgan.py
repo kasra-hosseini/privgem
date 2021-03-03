@@ -81,7 +81,7 @@ class Discriminator(Module):
         return self.seq(input.view(-1, self.packdim))
 
 
-class PATECTGAN(CTGANSynthesizer):
+class patectgan(CTGANSynthesizer):
     """
     Credit: This code is based on (with some minor changes):
             https://github.com/opendp/smartnoise-sdk

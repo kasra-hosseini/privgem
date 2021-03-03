@@ -1,0 +1,1 @@
+from privgem.tabular.patectgan import patectgan as tabular_patectgan
