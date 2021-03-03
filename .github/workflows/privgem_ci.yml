@@ -1,0 +1,24 @@
+name: Continuous integration
+
+on: [push]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        #$CONDA/bin/conda env update --file environment.yaml python=3.7 --name base
+        $CONDA/bin/conda env update python=3.8 --name base
+        $CONDA/bin/pip install -r requirements.txt
+    - name: Test with pytest
+      run: |
+        $CONDA/bin/conda install pytest
+        $CONDA/bin/pip install .
+        $CONDA/bin/pytest ./privgem/tests
