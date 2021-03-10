@@ -10,6 +10,7 @@ The above repo is released under MIT License: Copyright (c) 2020 President and F
 
 import math
 import numpy as np
+import os
 import time
 
 from sklearn.metrics import accuracy_score
@@ -142,6 +143,11 @@ class patectgan(CTGANSynthesizer):
         self.delta = delta
         self.pd_cols = None
         self.pd_index = None
+
+        # XXX
+        os.makedirs(os.path.dirname(os.path.abspath(output_save_path)), exist_ok=True)
+        with open(f"{output_save_path}", "w") as fio:
+            fio.writelines(f"PATE-CTGAN, epsilon: {epsilon}, noise_multiplier: {noise_multiplier}, moments order: {moments_order}, batch_size: {batch_size}\n")
 
     def train(self, data, categorical_columns=None, ordinal_columns=None, update_epsilon=None):
         if update_epsilon:
