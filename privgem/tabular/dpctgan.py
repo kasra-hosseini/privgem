@@ -9,6 +9,10 @@ The above repo is released under MIT License: Copyright (c) 2020 President and F
 """
 
 import numpy as np
+import os
+import time
+
+from sklearn.metrics import accuracy_score
 
 import torch
 from torch import optim
@@ -26,6 +30,30 @@ import opacus
 
 
 class Discriminator(Module):
+    """
+    Credit: This code is based on (with some minor changes):
+            https://github.com/opendp/smartnoise-sdk
+    """
+
+    def __init__(self, input_dim, dis_dims, loss, pack):
+        super(Discriminator, self).__init__()
+        torch.cuda.manual_seed(0)
+        torch.manual_seed(0)
+
+        dim = input_dim * pack
+        #  print ('now dim is {}'.format(dim))
+        self.pack = pack
+        self.packdim = dim
+        seq = []
+        for item in list(dis_dims):
+            seq += [Linear(dim, item), LeakyReLU(0.2), Dropout(0.5)]
+            dim = item
+
+        seq += [Linear(dim, 1)]
+        if loss == "cross_entropy":
+            seq += [Sigmoid()]
+        self.seq = Sequential(*seq)
+
     def calc_gradient_penalty(self, real_data, fake_data, device="cpu", pac=10, lambda_=10):
 
         alpha = torch.rand(real_data.size(0) // pac, 1, 1, device=device)
@@ -50,25 +78,6 @@ class Discriminator(Module):
         ).mean() * lambda_
 
         return gradient_penalty
-
-    def __init__(self, input_dim, dis_dims, loss, pack):
-        super(Discriminator, self).__init__()
-        torch.cuda.manual_seed(0)
-        torch.manual_seed(0)
-
-        dim = input_dim * pack
-        #  print ('now dim is {}'.format(dim))
-        self.pack = pack
-        self.packdim = dim
-        seq = []
-        for item in list(dis_dims):
-            seq += [Linear(dim, item), LeakyReLU(0.2), Dropout(0.5)]
-            dim = item
-
-        seq += [Linear(dim, 1)]
-        if loss == "cross_entropy":
-            seq += [Sigmoid()]
-        self.seq = Sequential(*seq)
 
     def forward(self, input):
         assert input.size()[0] % self.pack == 0
@@ -97,6 +106,9 @@ def _custom_create_or_extend_grad_sample(
 class dpctgan(CTGANSynthesizer):
     """Differential Private Conditional Table GAN Synthesizer
     This code adds Differential Privacy to CTGANSynthesizer from https://github.com/sdv-dev/CTGAN
+    
+    Credit: This code is based on (with some minor changes):
+        https://github.com/opendp/smartnoise-sd
     """
 
     def __init__(
@@ -116,7 +128,9 @@ class dpctgan(CTGANSynthesizer):
         epsilon=1,
         verbose=True,
         loss="cross_entropy",
-        secure_rng=True
+        secure_rng=True,
+        output_save_path="default.csv",
+        device="default"
     ):
 
         # CTGAN model specific parameters
@@ -129,7 +143,12 @@ class dpctgan(CTGANSynthesizer):
         self.epochs = epochs
         self.pack = pack
         self.log_frequency = log_frequency
-        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+        if device in ["default"]:
+            self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        else:
+            self.device = torch.device(device)
+
         # opacus parameters
         self.sigma = sigma
         self.disabled_dp = disabled_dp
@@ -143,12 +162,20 @@ class dpctgan(CTGANSynthesizer):
         self.verbose = verbose
         self.loss = loss
         self.secure_rng = secure_rng
+        self.output_save_path = output_save_path
 
         if self.loss != "cross_entropy":
             # Monkeypatches the _create_or_extend_grad_sample function when calling opacus
             opacus.supported_layers_grad_samplers._create_or_extend_grad_sample = (
                 _custom_create_or_extend_grad_sample
             )
+            # XXX
+
+        os.makedirs(os.path.dirname(os.path.abspath(output_save_path)), exist_ok=True)
+        with open(f"{output_save_path}", "w") as fio:
+            fio.writelines(f"DP-CTGAN, epsilon: {epsilon}, "
+                           f"sigma: {sigma}, "
+                           f"batch_size: {batch_size}\n")
 
     def train(self, data, categorical_columns=None, ordinal_columns=None, update_epsilon=None):
         if update_epsilon:
@@ -203,8 +230,15 @@ class dpctgan(CTGANSynthesizer):
         mean = torch.zeros(self.batch_size, self.embedding_dim, device=self.device)
         std = mean + 1
 
+        counter = 0 
+        t1 = time.time()
         steps_per_epoch = len(train_data) // self.batch_size
         for i in range(self.epochs):
+            # XXX
+            all_fake_label = []; all_fake_y = []
+            all_true_label = []; all_true_y = []
+            all_gen_label = []; all_gen_y = []
+
             for id_ in range(steps_per_epoch):
                 fakez = torch.normal(mean=mean, std=std)
 
@@ -268,6 +302,12 @@ class dpctgan(CTGANSynthesizer):
 
                     loss_d = error_d_real + error_d_fake
 
+                    # XXX
+                    all_fake_y.extend(y_fake.detach().cpu())
+                    all_true_y.extend(y_real.detach().cpu())
+                    all_fake_label.extend(label_fake.detach().cpu())
+                    all_true_label.extend(label_true.detach().cpu())
+
                 else:
 
                     y_fake = discriminator(fake_cat)
@@ -326,6 +366,10 @@ class dpctgan(CTGANSynthesizer):
                     # label_g = torch.full(int(self.batch_size/self.pack,),1,device=self.device)
                     loss_g = criterion(y_fake, label_g)
                     loss_g = loss_g + cross_entropy
+
+                    # XXX
+                    all_gen_y.extend(y_fake.detach().cpu())
+                    all_gen_label.extend(label_g.float().detach().cpu())
                 else:
                     loss_g = -torch.mean(y_fake) + cross_entropy
 
@@ -355,15 +399,24 @@ class dpctgan(CTGANSynthesizer):
             if not self.disabled_dp:
                 if self.epsilon < epsilon:
                     break
+
             self.loss_d_list.append(loss_d)
             self.loss_g_list.append(loss_g)
+
+            # XXX
             if self.verbose:
-                print(
-                    "Epoch %d, Loss G: %.4f, Loss D: %.4f"
-                    % (i + 1, loss_g.detach().cpu(), loss_d.detach().cpu()),
-                    flush=True,
-                )
-                print("epsilon is {e}, alpha is {a}".format(e=epsilon, a=best_alpha))
+                outmsg = f"{counter} | {time.time() - t1:f} | "\
+                         f"eps: {epsilon:.6f} (target: {self.epsilon:.6f}) | "\
+                         f"G: {loss_g.detach().cpu():.4f} | D: {loss_d.detach().cpu():.4f} | "\
+                         f"Acc (fake): {accuracy_score(all_fake_label, np.round(all_fake_y)):.4f} | "\
+                         f"Acc (true): {accuracy_score(all_true_label, np.round(all_true_y)):.4f} | "\
+                         f"Acc (generator): {accuracy_score(all_gen_label, np.round(all_gen_y)):.4f} | "\
+                         f"alpha: {best_alpha}"\
+
+                with open(self.output_save_path, "a+") as fio:
+                    fio.writelines(outmsg + "\n")
+                print(outmsg)
+                counter += 1
 
         return self.loss_d_list, self.loss_g_list, self.epsilon_list, self.alpha_list
 
