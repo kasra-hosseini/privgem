@@ -38,6 +38,24 @@ class Discriminator(Module):
             https://github.com/opendp/smartnoise-sdk
     """
 
+    def __init__(self, input_dim, dis_dims, loss, pack):
+        super(Discriminator, self).__init__()
+        torch.cuda.manual_seed(0)
+        torch.manual_seed(0)
+
+        dim = input_dim * pack
+        self.pack = pack
+        self.packdim = dim
+        seq = []
+        for item in list(dis_dims):
+            seq += [Linear(dim, item), LeakyReLU(0.2), Dropout(0.5)]
+            dim = item
+
+        seq += [Linear(dim, 1)]
+        if loss == "cross_entropy":
+            seq += [Sigmoid()]
+        self.seq = Sequential(*seq)
+
     def dragan_penalty(self, real_data, device="cpu", c=10, lambda_=10):
         alpha = torch.rand(real_data.shape[0], 1, device=device).expand(real_data.shape)
         delta = torch.normal(
@@ -58,24 +76,6 @@ class Discriminator(Module):
         dragan_penalty = lambda_ * ((gradients.norm(2, dim=1) - 1) ** 2).mean()
 
         return dragan_penalty
-
-    def __init__(self, input_dim, dis_dims, loss, pack):
-        super(Discriminator, self).__init__()
-        torch.cuda.manual_seed(0)
-        torch.manual_seed(0)
-
-        dim = input_dim * pack
-        self.pack = pack
-        self.packdim = dim
-        seq = []
-        for item in list(dis_dims):
-            seq += [Linear(dim, item), LeakyReLU(0.2), Dropout(0.5)]
-            dim = item
-
-        seq += [Linear(dim, 1)]
-        if loss == "cross_entropy":
-            seq += [Sigmoid()]
-        self.seq = Sequential(*seq)
 
     def forward(self, input):
         assert input.size()[0] % self.pack == 0
@@ -114,7 +114,8 @@ class patectgan(CTGANSynthesizer):
         noise_multiplier=1e-3,
         moments_order=100,
         # XXX
-        output_save_path="default.csv"
+        output_save_path="default.csv",
+        device="default"
     ):
 
         # CTGAN model specifi3c parameters
@@ -126,7 +127,12 @@ class patectgan(CTGANSynthesizer):
         self.epochs = epochs
         self.pack = pack
         self.log_frequency = log_frequency
-        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+        if device in ["default"]:
+            self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        else:
+            self.device = torch.device(device)
+
         self.verbose = verbose
         self.loss = loss
         self.regularization = regularization if self.loss != "wasserstein" else "dragan"
@@ -147,7 +153,10 @@ class patectgan(CTGANSynthesizer):
         # XXX
         os.makedirs(os.path.dirname(os.path.abspath(output_save_path)), exist_ok=True)
         with open(f"{output_save_path}", "w") as fio:
-            fio.writelines(f"PATE-CTGAN, epsilon: {epsilon}, noise_multiplier: {noise_multiplier}, moments order: {moments_order}, batch_size: {batch_size}\n")
+            fio.writelines(f"PATE-CTGAN, epsilon: {epsilon}, "
+                           f"noise_multiplier: {noise_multiplier}, "
+                           f"moments order: {moments_order}, "
+                           f"batch_size: {batch_size}\n")
 
     def train(self, data, categorical_columns=None, ordinal_columns=None, update_epsilon=None):
         if update_epsilon:
@@ -273,15 +282,15 @@ class patectgan(CTGANSynthesizer):
                         device=self.device,
                     )
                     labels = torch.cat([label_fake, label_true])
-                    
+                
+                    error_d = criterion(y_all, labels)
+                    error_d.backward()
+
                     # XXX
                     all_fake_y.extend(teacher_disc[i](fake_cat).detach().cpu())
                     all_true_y.extend(teacher_disc[i](real_cat).detach().cpu())
                     all_fake_label.extend(label_fake.detach().cpu())
                     all_true_label.extend(label_true.detach().cpu())
-
-                    error_d = criterion(y_all, labels)
-                    error_d.backward()
 
                     if self.regularization == "dragan":
                         pen = teacher_disc[i].dragan_penalty(real_cat, device=self.device)
@@ -403,13 +412,13 @@ class patectgan(CTGANSynthesizer):
             
             # XXX
             if(self.verbose):
-                outmsg = '{:d} | {:f} | eps: {:.6f} (target: {:.6f}) | G: {:.4f} | D: {:.4f} | Acc (fake): {:.4f} | Acc (true): {:.4f} | Acc (student): {:.4f} | Acc (generator): {:.4f}'.format(counter, time.time() - t1, 
-                                                eps, self.epsilon, loss_g.detach().cpu(), loss_s.detach().cpu(), 
-                                                accuracy_score(all_fake_label, np.round(all_fake_y)), 
-					        accuracy_score(all_true_label, np.round(all_true_y)),
-					        accuracy_score(all_student_label, np.round(all_student_y)),
-					        accuracy_score(all_gen_label, np.round(all_gen_y)),
-						)
+                outmsg = f"{counter} | {time.time() - t1:f} | "\
+                         f"eps: {eps:.6f} (target: {self.epsilon:.6f}) | "\
+                         f"G: {loss_g.detach().cpu():.4f} | D: {loss_s.detach().cpu():.4f} | "\
+                         f"Acc (fake): {accuracy_score(all_fake_label, np.round(all_fake_y)):.4f} | "\
+                         f"Acc (true): {accuracy_score(all_true_label, np.round(all_true_y)):.4f} | "\
+                         f"Acc (generator): {accuracy_score(all_gen_label, np.round(all_gen_y)):.4f} | "\
+                         f"Acc (student): {accuracy_score(all_student_label, np.round(all_student_y)):.4f}"
                 with open(self.output_save_path, "a+") as fio:
                     fio.writelines(outmsg + "\n")
                 print(outmsg)
