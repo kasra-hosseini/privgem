@@ -101,7 +101,7 @@ git clone https://github.com/kasra-hosseini/privgem.git
 
 ```
 # Install dependencies
-pip install ctgan==0.2.2.dev1
+pip install git+https://github.com/kasra-hosseini/CTGAN.git
 pip install opacus==0.9.0
 pip install torch==1.6.0
 pip install jupyterlab
