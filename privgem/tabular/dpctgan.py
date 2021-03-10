@@ -106,7 +106,7 @@ def _custom_create_or_extend_grad_sample(
 class dpctgan(CTGANSynthesizer):
     """Differential Private Conditional Table GAN Synthesizer
     This code adds Differential Privacy to CTGANSynthesizer from https://github.com/sdv-dev/CTGAN
-    
+
     Credit: This code is based on (with some minor changes):
         https://github.com/opendp/smartnoise-sd
     """
@@ -155,10 +155,10 @@ class dpctgan(CTGANSynthesizer):
         self.target_delta = target_delta
         self.max_per_sample_grad_norm = max_per_sample_grad_norm
         self.epsilon = epsilon
-        self.epsilon_list = []
-        self.alpha_list = []
-        self.loss_d_list = []
-        self.loss_g_list = []
+        # self.epsilon_list = []
+        # self.alpha_list = []
+        # self.loss_d_list = []
+        # self.loss_g_list = []
         self.verbose = verbose
         self.loss = loss
         self.secure_rng = secure_rng
@@ -392,16 +392,15 @@ class dpctgan(CTGANSynthesizer):
                         self.target_delta
                     )
 
-                    self.epsilon_list.append(epsilon)
-                    self.alpha_list.append(best_alpha)
-                    # if self.verbose:
+                    # self.epsilon_list.append(epsilon)
+                    # self.alpha_list.append(best_alpha)
 
             if not self.disabled_dp:
                 if self.epsilon < epsilon:
                     break
 
-            self.loss_d_list.append(loss_d)
-            self.loss_g_list.append(loss_g)
+            #self.loss_d_list.append(loss_d)
+            #self.loss_g_list.append(loss_g)
 
             # XXX
             if self.verbose:
@@ -418,7 +417,7 @@ class dpctgan(CTGANSynthesizer):
                 print(outmsg)
                 counter += 1
 
-        return self.loss_d_list, self.loss_g_list, self.epsilon_list, self.alpha_list
+        # return self.loss_d_list, self.loss_g_list, self.epsilon_list, self.alpha_list
 
     def generate(self, n):
         self.generator.eval()
