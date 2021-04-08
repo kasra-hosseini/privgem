@@ -8,6 +8,7 @@ https://github.com/opendp/smartnoise-sdk
 The above repo is released under MIT License: Copyright (c) 2020 President and Fellows of Harvard College
 """
 
+import joblib
 import math
 import numpy as np
 import os
@@ -146,9 +147,11 @@ class patectgan(CTGANSynthesizer):
         self.teacher_iters = teacher_iters
         self.student_iters = student_iters
         self.epsilon = epsilon
+        self.cur_eps = None
         self.delta = delta
         self.pd_cols = None
         self.pd_index = None
+        self.train_counter = None
 
         # XXX
         os.makedirs(os.path.dirname(os.path.abspath(output_save_path)), exist_ok=True)
@@ -210,7 +213,9 @@ class patectgan(CTGANSynthesizer):
         noise_multiplier = self.noise_multiplier
         alphas = torch.tensor([0.0 for i in range(self.moments_order)], device=self.device)
         l_list = 1 + torch.tensor(range(self.moments_order), device=self.device)
-        eps = 0
+    
+        if self.cur_eps == None:
+            self.cur_eps = 0
 
         mean = torch.zeros(self.batch_size, self.embedding_dim, device=self.device)
         std = mean + 1
@@ -223,9 +228,11 @@ class patectgan(CTGANSynthesizer):
         if self.verbose:
             print("using loss {} and regularization {}".format(self.loss, self.regularization))
 
-        counter = 0 
+        if self.train_counter == None:
+            self.train_counter = 0
+
         t1 = time.time()
-        while eps < self.epsilon:
+        while self.cur_eps < self.epsilon:
             # train teacher discriminators
             # XXX
             all_fake_label = []; all_fake_y = []
@@ -408,12 +415,12 @@ class patectgan(CTGANSynthesizer):
             loss_g.backward()
             optimizer_g.step()
 
-            eps = min((alphas - math.log(self.delta)) / l_list)
+            self.cur_eps = min((alphas - math.log(self.delta)) / l_list)
             
             # XXX
             if(self.verbose):
-                outmsg = f"{counter} | {time.time() - t1:f} | "\
-                         f"eps: {eps:.6f} (target: {self.epsilon:.6f}) | "\
+                outmsg = f"{self.train_counter} | {time.time() - t1:f} | "\
+                         f"eps: {self.cur_eps:.6f} (target: {self.epsilon:.6f}) | "\
                          f"G: {loss_g.detach().cpu():.4f} | D: {loss_s.detach().cpu():.4f} | "\
                          f"Acc (fake): {accuracy_score(all_fake_label, np.round(all_fake_y)):.4f} | "\
                          f"Acc (true): {accuracy_score(all_true_label, np.round(all_true_y)):.4f} | "\
@@ -422,7 +429,7 @@ class patectgan(CTGANSynthesizer):
                 with open(self.output_save_path, "a+") as fio:
                     fio.writelines(outmsg + "\n")
                 print(outmsg)
-                counter += 1
+                self.train_counter += 1
 
     def w_loss(self, output, labels):
         vals = torch.cat([labels, output], axis=1)
@@ -463,3 +470,30 @@ class patectgan(CTGANSynthesizer):
         generated_data = self.transformer.inverse_transform(data, None)
 
         return generated_data
+
+    def save(self, save_path="default.obj", force=False):
+        """Save object"""
+        if os.path.isfile(save_path):
+            if force:
+                os.remove(save_path)
+            else:
+                raise FileExistsError(f"file already exists: {save_path}")
+
+        os.makedirs(os.path.dirname(os.path.abspath(save_path)), exist_ok=True)
+        with open(save_path, 'wb') as myfile:
+            #pickle.dump(self.__dict__, myfile)
+            joblib.dump(self.__dict__, myfile)
+
+    def load(self, load_path, remove_after_load=False):
+        """load class"""
+        if not os.path.isfile(load_path):
+            raise FileNotFoundError(f"file not found: {load_path}")
+
+        with open(load_path, 'rb') as myfile:
+            #objPickle = pickle.load(myfile)
+            objPickle = joblib.load(myfile)
+
+        if remove_after_load:
+            os.remove(load_path)
+
+        self.__dict__ = objPickle 
