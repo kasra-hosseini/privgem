@@ -29,7 +29,6 @@
 | PATE-CTGAN  | [smartnoise-sdk](https://github.com/opendp/smartnoise-sdk)            | `tabular_patectgan` of `privgem` is based on `smartnoise-sdk` with  some minor changes (e.g., data preproc., logging, plotting and etc) |
 | DP-CTGAN    | [smartnoise-sdk](https://github.com/opendp/smartnoise-sdk)            | `tabular_dpctgan` of `privgem` is based on `smartnoise-sdk` with  some minor changes (e.g., data preproc., logging, plotting and etc)   |
 | CTGAN       | [sdv-dev](https://github.com/sdv-dev/CTGAN)                           | currently, `privgem` uses a forked version of `ctgan`, [link](https://github.com/kasra-hosseini/CTGAN)                                  |
-| K-anonymity | [Nuclearstar/K-Anonymity](https://github.com/Nuclearstar/K-Anonymity) |                                                                                                                                         |
 
 ## Installation
 
