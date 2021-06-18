@@ -3,20 +3,24 @@
 
 import numpy as np
 from scipy.spatial import distance
+from typing import Union
 
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.inspection import permutation_importance
 from sklearn.metrics import precision_recall_curve
-from sklearn.metrics import f1_score
+from sklearn.metrics import f1_score, roc_auc_score
 from sklearn.metrics import auc as sklearn_auc
-
-from typing import Union
+from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, OrdinalEncoder
 
 def performance_classification(X_train: Union[list, np.ndarray], 
                                y_train: Union[list, np.ndarray], 
                                X_test: Union[list, np.ndarray], 
                                y_test: Union[list, np.ndarray], 
-                               model_imp=RandomForestClassifier()):
+                               model_imp=RandomForestClassifier(),
+                               pipe_classifier_name: Union[str, None]=None):
     """Compute various performance metrics for classification
 
     Parameters
@@ -33,11 +37,20 @@ def performance_classification(X_train: Union[list, np.ndarray],
     probs = probs[:, 1]
     yhat = model_imp.predict(X_test)
 
+    try:
+        if pipe_classifier_name is None:
+            features_imp = model_imp.feature_importances_
+        else:
+            features_imp = model_imp[pipe_classifier_name].feature_importances_
+    except Exception:
+        features_imp = None
+
     precision_curve, recall_curve, _ = precision_recall_curve(y_test, probs)
     f1 = f1_score(y_test, yhat)
     auc = sklearn_auc(recall_curve, precision_curve)
+    roc_auc = roc_auc_score(y_test, probs)
 
-    return f1, auc
+    return f1, auc, roc_auc, features_imp
 
 
 def feature_importance(X: Union[list, np.ndarray], 
@@ -122,14 +135,51 @@ def L2_norm_dist(l1: Union[list, np.ndarray],
     
     return np.sqrt(np.sum((l1_norm - l2_norm)**2))
 
-def extract_X_y(df, label_col="label"):
-    """Extract X and y from a dataframe
-    """
-    
-    # read list of columns and remove label_col
-    list_X_cols = list(df.columns)
-    list_X_cols.remove(label_col)
+def create_pipeline(num_columns: list,
+                    cat_columns: list,
+                    categories: Union[list, tuple],
+                    inp_classifer=RandomForestClassifier(),
+                    inp_cat_encoder: str="ordinal",
+                    inp_cat_imputer: str="most_frequent"):
+    """Create a pipeline
 
-    X = df[list_X_cols].to_numpy()
-    y = df[label_col].to_numpy()
-    return X, y
+    Parameters
+    ----------
+    num_columns : list
+        Numeric columns
+    cat_columns : list
+    categories : Union[list, tuple]
+    inp_classifer : [type], optional
+    inp_cat_encoder : str, optional
+    inp_cat_imputer : str, optional
+    """
+
+    if inp_cat_encoder == "ordinal":
+        cat_encoder = OrdinalEncoder(categories=categories)
+    elif inp_cat_encoder == "onehot":
+        cat_encoder = OneHotEncoder(categories=categories, 
+                                    handle_unknown='ignore')
+    else:
+        raise NotImplementedError(f"Method: {inp_cat_encoder} is not implemented")
+        
+    # preprocessing
+    preproc = Pipeline([
+        ("cat_imputer", SimpleImputer(strategy=inp_cat_imputer)),
+        ("scaler", StandardScaler())
+    ])
+
+    ct = ColumnTransformer([
+        # Transformer for categorical variables
+        ("cat_encoder", cat_encoder, cat_columns),
+        # Transformer for numeric variables
+        ("num_preproc", preproc, num_columns)
+        ], 
+        # variables not specified in the indices?
+        remainder="drop")
+
+    pipe = Pipeline([
+        ("preprocessing", ct),
+        ("classifier", inp_classifer)
+    ])
+    
+    return pipe
