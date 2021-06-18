@@ -6,5 +6,6 @@ def test_import():
     from privgem import tabular_ctgan
     from privgem import tabular_utils
     from privgem import tabular_metrics
+    from privgem import rbo_metric
     from privgem import tabular_artificial
     from privgem import tabular_ppgm
