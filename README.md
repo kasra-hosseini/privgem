@@ -26,9 +26,10 @@
 
 | Method      | Original version                                                      | Notes                                                                                                                                   |
 |-------------|-----------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
-| PATE-CTGAN  | [smartnoise-sdk](https://github.com/opendp/smartnoise-sdk)            | `tabular_patectgan` of `privgem` is based on `smartnoise-sdk` with  some minor changes (e.g., data preproc., logging, plotting and etc) |
-| DP-CTGAN    | [smartnoise-sdk](https://github.com/opendp/smartnoise-sdk)            | `tabular_dpctgan` of `privgem` is based on `smartnoise-sdk` with  some minor changes (e.g., data preproc., logging, plotting and etc)   |
-| CTGAN       | [sdv-dev](https://github.com/sdv-dev/CTGAN)                           | currently, `privgem` uses a forked version of `ctgan`, [link](https://github.com/kasra-hosseini/CTGAN)                                  |
+| PATE-CTGAN  | [smartnoise-sdk](https://github.com/opendp/smartnoise-sdk)            | `tabular_patectgan` of `privgem` is based on `smartnoise-sdk` with  some minor changes (e.g., data preproc., logging, plotting and etc). |
+| DP-CTGAN    | [smartnoise-sdk](https://github.com/opendp/smartnoise-sdk)            | `tabular_dpctgan` of `privgem` is based on `smartnoise-sdk` with  some minor changes (e.g., data preproc., logging, plotting and etc).   |
+| Private-PGM    | [private-data-generation](https://github.com/BorealisAI/private-data-generation)            | `tabular_ppgm` of `privgem` is based on [private-data-generation](https://github.com/BorealisAI/private-data-generation) with some minor changes.   |
+| CTGAN       | [sdv-dev](https://github.com/sdv-dev/CTGAN)                           | currently, `privgem` uses a forked version of `ctgan`, [link](https://github.com/kasra-hosseini/CTGAN).                                  |
 
 ## Installation
 
