@@ -4,7 +4,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-import sys
+from typing import Union
 
 from sklearn.model_selection import train_test_split
 
@@ -34,15 +34,44 @@ def split_save_orig_data(input_data,
     print(f"[INFO] split dataset")
     if (path_train is not None) or (path_test is not None):
         data_train, data_test = train_test_split(input_data, 
-                                                test_size=test_size, 
-                                                random_state=random_state, 
-                                                stratify=input_data[label_col] if label_col else None)
+                                                 test_size=test_size, 
+                                                 random_state=random_state, 
+                                                 stratify=input_data[label_col] if label_col else None)
         
         print(f"[INFO] save the train set: {path_train}")
         data_train.to_csv(path_train, index=False)
 
         print(f"[INFO] save the test set: {path_test}")
         data_test.to_csv(path_test, index=False)
+
+def extract_X_y(df, label_col="label"):
+    """Extract X and y from a dataframe
+    """
+    
+    # read list of columns and remove label_col
+    list_X_cols = list(df.columns)
+    list_X_cols.remove(label_col)
+
+    X = df[list_X_cols].to_numpy()
+    y = df[label_col].to_numpy()
+    return X, y
+
+def extract_col_names_by_type(X, 
+                              cat_types: Union[list, tuple]=['category', 'object'],
+                              num_types: Union[list, tuple]=['float', 'int']):
+    """Extract categorical and numerical columns
+
+    Parameters
+    ----------
+    X : input dataframe
+    cat_types : Union[list, tuple], optional
+    num_types : Union[list, tuple], optional
+    """
+    
+    num_columns = list(X.select_dtypes(include=num_types).columns)
+    cat_columns = list(X.select_dtypes(include=cat_types).columns)
+    
+    return num_columns, cat_columns
 
 def plot_log_patectgan(filename, method_name="PATE-CTGAN", show_or_save="show"):
 
