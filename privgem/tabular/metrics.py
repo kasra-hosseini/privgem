@@ -15,6 +15,9 @@ from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder, OrdinalEncoder
 
+import torch
+import torch.nn.functional as F
+
 def performance_classification(X_train: Union[list, np.ndarray], 
                                y_train: Union[list, np.ndarray], 
                                X_test: Union[list, np.ndarray], 
@@ -134,6 +137,19 @@ def L2_norm_dist(l1: Union[list, np.ndarray],
     l2_norm = l2/l2d
     
     return np.sqrt(np.sum((l1_norm - l2_norm)**2))
+
+def kl_div(p_test: Union[tuple, list, np.ndarray], 
+           p_targ: Union[tuple, list, np.ndarray]):
+    """Compute KL divergence between two lists/arrays
+
+    Parameters
+    ----------
+    p_test : Union[tuple, list, np.ndarray]
+    p_targ : Union[tuple, list, np.ndarray]
+    """
+    p_test = F.softmax(torch.tensor(p_test), dim=0)
+    p_targ = F.softmax(torch.tensor(p_targ), dim=0)
+    return F.kl_div(p_test.log(), p_targ, reduction="batchmean")
 
 def create_pipeline(num_columns: list,
                     cat_columns: list,
