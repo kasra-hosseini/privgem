@@ -16,8 +16,6 @@
 
 - [Credits](#credits)
 - [Installation and setup](#installation)
-  - [Method 1: Anaconda + install dependencies using `environment.yaml` file](#method-1)
-  - [Method 2: Anaconda + install dependencies manually](#method-2)
 
 ## Credits
 
@@ -36,48 +34,6 @@
 We strongly recommend installation via Anaconda:
 
 * Refer to [Anaconda website and follow the instructions](https://docs.anaconda.com/anaconda/install/).
-
-### Method 1
-
-* Create a conda environment and install the dependencies using `environment.yaml` file:
-
-```bash
-conda env create --file environment.yaml python=3.8 --name privgem_py38
-```
-
-* Activate the environment:
-
-```bash
-conda activate privgem_py38
-```
-
-* Clone `privgem` source code:
-
-```bash
-git clone https://github.com/kasra-hosseini/privgem.git
-```
-
-* Finally, install `privgem` library:
-
-```
-cd /path/to/privgem
-pip install -v -e .
-```
-
-Alternatively:
-
-```
-cd /path/to/privgem
-python setup.py install
-```
-
-* To allow the newly created `privgem_py38` environment to show up in Jupyter Notebook:
-
-```bash
-python -m ipykernel install --user --name privgem_py38 --display-name "Python (privgem_py38)"
-```
-
-### Method 2
 
 * Create a new environment for `privgem` called `privgem_py38`:
 
@@ -99,13 +55,8 @@ git clone https://github.com/kasra-hosseini/privgem.git
 
 * Install `privgem` dependencies:
 
-```
-# Install dependencies
-pip install git+https://github.com/kasra-hosseini/CTGAN.git
-pip install opacus==0.9.0
-pip install torch==1.6.0
-pip install jupyterlab
-pip install matplotlib
+```bash
+pip install -r requirements.txt
 ```
 
 * Finally, install `privgem` library:
