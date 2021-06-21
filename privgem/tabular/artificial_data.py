@@ -72,9 +72,9 @@ def make_table(n_samples: int=1000,
     
     # number of continuous columns
     n_continuous = n_features - n_categorical
+    all_categories = []
     
     if n_categorical > 0:
-        all_categories = []
         if n_categorical_bins is None:
             n_categorical_bins = [5]*n_categorical
             
