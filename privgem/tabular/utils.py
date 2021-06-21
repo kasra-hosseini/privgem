@@ -4,6 +4,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+import pandas as pd
 from typing import Union
 
 from sklearn.model_selection import train_test_split
@@ -72,6 +73,27 @@ def extract_col_names_by_type(X,
     cat_columns = list(X.select_dtypes(include=cat_types).columns)
     
     return num_columns, cat_columns
+
+def sort_feature_vector(feature_vec: Union[list, tuple], 
+                        cols: Union[list, tuple]):
+    """Sort feature vector
+
+    Parameters
+    ----------
+    feature_vec : Union[list, tuple]
+    cols : Union[list, tuple]
+    """
+    # create a dataframe and sort by score
+    feature_vec_pd = \
+        pd.DataFrame(np.vstack([feature_vec.astype(float), cols]).T, 
+                     columns=["score", "feature"])
+    feature_vec_pd["score"] = feature_vec_pd["score"].astype(float)
+    sorted_feature_vec_pd = feature_vec_pd.sort_values(by="score", ascending=False)
+
+    # extract feature and score
+    sorted_feature_vec = sorted_feature_vec_pd["feature"].to_list()
+    sorted_feature_score = sorted_feature_vec_pd["score"].to_list()
+    return sorted_feature_vec, sorted_feature_score
 
 def plot_log_patectgan(filename, method_name="PATE-CTGAN", show_or_save="show"):
 
