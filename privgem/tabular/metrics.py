@@ -15,6 +15,8 @@ from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder, OrdinalEncoder
 
+import shap 
+
 import torch
 import torch.nn.functional as F
 
@@ -23,7 +25,8 @@ def performance_classification(X_train: Union[list, np.ndarray],
                                X_test: Union[list, np.ndarray], 
                                y_test: Union[list, np.ndarray], 
                                model_imp=RandomForestClassifier(),
-                               pipe_classifier_name: Union[str, None]=None):
+                               pipe_classifier_name: Union[str, None]=None,
+                               feature_importance_methods: Union[list]=["builtin", "permutation", "shap"]):
     """Compute various performance metrics for classification
 
     Parameters
@@ -41,19 +44,41 @@ def performance_classification(X_train: Union[list, np.ndarray],
     yhat = model_imp.predict(X_test)
 
     try:
+        if not "builtin" in feature_importance_methods: raise
         if pipe_classifier_name is None:
             features_imp = model_imp.feature_importances_
         else:
             features_imp = model_imp[pipe_classifier_name].feature_importances_
     except Exception:
         features_imp = None
+    
+    try:
+        if not "permutation" in feature_importance_methods: raise
+        feature_imp_perm = permutation_importance(model_imp, X_test, y_test)
+        feature_imp_perm = feature_imp_perm["importances_mean"]
+    except Exception:
+        feature_imp_perm = None
+
+    try:
+        if not "shap" in feature_importance_methods: raise
+        shap_explainer = shap.TreeExplainer(model=model_imp["classifier"])
+        shap_values = shap_explainer.shap_values(X_test)
+    
+        # version that uses the interventional perturbation option (takes into account a background dataset
+        # fm_train) - throws errors in some cases which can be suppressed by setting check_additivity=False
+        # in explainer.shap_values(). It is also slower.
+        # explainer = shap.TreeExplainer(model=clf, data=fm_train, feature_perturbation='interventional')
+        # shap_values = explainer.shap_values(fm_test, check_additivity=False)
+        feature_imp_shap = sum(np.abs(shap_values).mean(0))
+    except Exception:
+        feature_imp_shap = None
 
     precision_curve, recall_curve, _ = precision_recall_curve(y_test, probs)
     f1 = f1_score(y_test, yhat)
     auc = sklearn_auc(recall_curve, precision_curve)
     roc_auc = roc_auc_score(y_test, probs)
 
-    return f1, auc, roc_auc, features_imp
+    return f1, auc, roc_auc, features_imp, feature_imp_perm, feature_imp_shap
 
 
 def feature_importance(X: Union[list, np.ndarray], 
