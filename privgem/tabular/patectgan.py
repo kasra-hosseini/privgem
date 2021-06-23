@@ -294,10 +294,10 @@ class patectgan(CTGANSynthesizer):
                     error_d.backward()
 
                     # XXX
-                    all_fake_y.extend(teacher_disc[i](fake_cat).detach().cpu())
-                    all_true_y.extend(teacher_disc[i](real_cat).detach().cpu())
-                    all_fake_label.extend(label_fake.detach().cpu())
-                    all_true_label.extend(label_true.detach().cpu())
+                    all_fake_y.extend(teacher_disc[i](fake_cat).flatten().detach().cpu())
+                    all_true_y.extend(teacher_disc[i](real_cat).flatten().detach().cpu())
+                    all_fake_label.extend(label_fake.flatten().detach().cpu())
+                    all_true_label.extend(label_true.flatten().detach().cpu())
 
                     if self.regularization == "dragan":
                         pen = teacher_disc[i].dragan_penalty(real_cat, device=self.device)
@@ -347,8 +347,8 @@ class patectgan(CTGANSynthesizer):
                 )
 
                 # XXX
-                all_student_y.extend(output.detach().cpu())
-                all_student_label.extend(predictions.float().detach().cpu())
+                all_student_y.extend(output.flatten().detach().cpu())
+                all_student_label.extend(predictions.flatten().float().detach().cpu())
 
                 loss_s = criterion(output, predictions.float().to(self.device))
 
@@ -403,8 +403,8 @@ class patectgan(CTGANSynthesizer):
                 )
 
                 # XXX
-                all_gen_y.extend(y_fake.detach().cpu())
-                all_gen_label.extend(label_g.float().detach().cpu())
+                all_gen_y.extend(y_fake.flatten().detach().cpu())
+                all_gen_label.extend(label_g.float().flatten().detach().cpu())
 
                 loss_g = criterion(y_fake, label_g.float())
                 loss_g = loss_g + cross_entropy
