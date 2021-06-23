@@ -84,7 +84,7 @@ def make_table(n_samples: int=1000,
                                       strategy=categorical_strategy)
             # make categorical columns after n_continuous columns
             X[:, n_continuous+icol] = \
-                binner.fit_transform(X[:, n_continuous+icol].reshape(-1, 1)).reshape(-1)
+                binner.fit_transform(X[:, n_continuous+icol].astype(float).reshape(-1, 1)).reshape(-1)
             
             # collect all categories
             all_categories.append([str(cat) for cat in range(n_categorical_bins[icol])])
@@ -94,14 +94,13 @@ def make_table(n_samples: int=1000,
     X.iloc[:, n_continuous:] = X.iloc[:, n_continuous:].astype(int)
     
     if n_categorical > 0:
-        if categorical_map_string == "ascii_uppercase":
-            map2str = string.ascii_uppercase
+        if categorical_map_string == "ascii":
+            map2str = string.ascii_letters
+            # map values to another value with .map(dict)
+            X.iloc[:, n_continuous:] = \
+                X.iloc[:, n_continuous:].apply(lambda x: x.map({i:letter for i,letter in enumerate(map2str)}))
         else:
-            map2str = string.digits
-
-        # map values to another value with .map(dict)
-        X.iloc[:, n_continuous:] = \
-            X.iloc[:, n_continuous:].apply(lambda x: x.map({i:letter for i,letter in enumerate(map2str)}))
+            X.iloc[:, n_continuous:] = X.iloc[:, n_continuous:].astype("str")
 
         X.iloc[:, n_continuous:] = X.iloc[:, n_continuous:].astype("category")
     
