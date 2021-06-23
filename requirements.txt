@@ -7,3 +7,4 @@ jupyterlab
 matplotlib
 PuLP
 networkx
+dython
