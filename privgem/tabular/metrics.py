@@ -17,6 +17,8 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder, OrdinalEncoder
 
 import shap 
 
+from dython.nominal import associations
+
 import torch
 import torch.nn.functional as F
 
@@ -62,15 +64,18 @@ def performance_classification(X_train: Union[list, np.ndarray],
     try:
         if not "shap" in feature_importance_methods: raise
         shap_explainer = shap.TreeExplainer(model=model_imp["classifier"])
-        shap_values = shap_explainer.shap_values(X_test)
+        shap_values = shap_explainer.shap_values(model_imp["preprocessing"].fit_transform(X_test))
     
         # version that uses the interventional perturbation option (takes into account a background dataset
         # fm_train) - throws errors in some cases which can be suppressed by setting check_additivity=False
         # in explainer.shap_values(). It is also slower.
         # explainer = shap.TreeExplainer(model=clf, data=fm_train, feature_perturbation='interventional')
         # shap_values = explainer.shap_values(fm_test, check_additivity=False)
-        feature_imp_shap = sum(np.abs(shap_values).mean(0))
-    except Exception:
+        feature_imp_shap = np.abs(shap_values).mean(0)
+        if len(feature_imp_shap.shape) > 1:
+            feature_imp_shap = sum(feature_imp_shap)
+    except Exception as err:
+        print(err)
         feature_imp_shap = None
 
     precision_curve, recall_curve, _ = precision_recall_curve(y_test, probs)
@@ -175,6 +180,13 @@ def kl_div(p_test: Union[tuple, list, np.ndarray],
     p_test = F.softmax(torch.tensor(p_test), dim=0)
     p_targ = F.softmax(torch.tensor(p_targ), dim=0)
     return F.kl_div(p_test.log(), p_targ, reduction="batchmean")
+
+def compute_associations(input_df, nominal_columns, plot=False):
+    """Compute correlation matrix for a dataframe with mixed data types
+    """
+    return associations(input_df, 
+                        nominal_columns=nominal_columns,
+                        plot=plot)["corr"].abs()
 
 def create_pipeline(num_columns: list,
                     cat_columns: list,
