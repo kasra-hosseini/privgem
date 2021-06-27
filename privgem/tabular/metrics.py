@@ -179,7 +179,8 @@ def kl_div(p_test: Union[tuple, list, np.ndarray],
     """
     p_test = F.softmax(torch.tensor(p_test), dim=0)
     p_targ = F.softmax(torch.tensor(p_targ), dim=0)
-    return F.kl_div(p_test.log(), p_targ, reduction="batchmean")
+    kl_div_val = F.kl_div(p_test.log(), p_targ, reduction="batchmean")
+    return float(kl_div_val.detach())
 
 def compute_associations(input_df, nominal_columns, plot=False):
     """Compute correlation matrix for a dataframe with mixed data types
