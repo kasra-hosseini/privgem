@@ -29,6 +29,7 @@
 | Private-PGM    | [private-data-generation](https://github.com/BorealisAI/private-data-generation)            | `tabular_ppgm` of `privgem` is based on [private-data-generation](https://github.com/BorealisAI/private-data-generation) with some minor changes.   |
 | CTGAN       | [sdv-dev](https://github.com/sdv-dev/CTGAN)                           | currently, `privgem` uses a forked version of `ctgan`, [link](https://github.com/kasra-hosseini/CTGAN).                                  |
 
+
 ## Installation
 
 We strongly recommend installation via Anaconda:
