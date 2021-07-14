@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "privgem"
+version = "0.1.0"
+description = "privgem: Privacy-Preserving Generative Models"
+authors = ["Kasra Hosseini <khosseini@turing.ac.uk>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = ">=3.7,<3.9"
+torch = "1.6.0"
+PuLP = "^2.4"
+networkx = "^2.6.1"
+dython = "^0.6.6"
+shap = "0.39.0"
+CTGAN = { git = "https://github.com/kasra-hosseini/CTGAN.git", branch = "privgem_develop"}
+
+
+[tool.poetry.dev-dependencies]
+jupyterlab = "^3.0.16"
+matplotlib = "^3.4.2"
+pytest = "^6.2.4"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
