@@ -11,9 +11,9 @@ torch = "1.6.0"
 PuLP = "^2.4"
 networkx = "^2.6.1"
 dython = "^0.6.6"
-shap = "0.39.0"
 CTGAN = { git = "https://github.com/kasra-hosseini/CTGAN.git", branch = "privgem_develop"}
 opacus = "^0.14.0"
+shap = "^0.39.0"
 
 [tool.poetry.dev-dependencies]
 jupyterlab = "^3.0.16"
