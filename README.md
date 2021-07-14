@@ -54,12 +54,6 @@ conda activate privgem_py38
 git clone https://github.com/kasra-hosseini/privgem.git
 ```
 
-* Install `privgem` dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
 * Finally, install `privgem` library:
 
 ```

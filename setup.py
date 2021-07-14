@@ -7,15 +7,15 @@ setuptools.setup(
     author=u"Kasra Hosseini",
     license="MIT License",
     keywords=["generative models", "privacy", "utility", "Deep Learning", "QUIPP"],
-    long_description = open('README.md', encoding='utf-8', errors='replace').read(),
-    long_description_content_type = 'text/markdown',
-    zip_safe = False,
+    long_description=open("README.md", encoding="utf-8", errors="replace").read(),
+    long_description_content_type="text/markdown",
+    zip_safe=False,
     url="https://github.com/kasra-hosseini/privgem",
     download_url="https://github.com/kasra-hosseini/privgem/archive/refs/heads/develop.zip",
-    packages = setuptools.find_packages(),
-    include_package_data = True,
+    packages=setuptools.find_packages(),
+    include_package_data=True,
     platforms="OS Independent",
-    python_requires='>=3.7',
+    python_requires=">=3.7",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: MIT License",
@@ -32,11 +32,19 @@ setuptools.setup(
         "Topic :: Software Development",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
-        ],
-
-    entry_points={
-        'console_scripts': [
-            'privgem = privgem.privgem:main',
-        ],
-    }
+    ],
+    install_requires=[
+        "shap",
+        "sdv",
+        "CTGAN",
+        "opacus==0.9.0",
+        "torch==1.6.0",
+        "jupyterlab",
+        "matplotlib",
+        "PuLP",
+        "networkx",
+        "dython",
+    ],
+    dependency_links=["https://github.com/kasra-hosseini/CTGAN.git"],
+    entry_points={"console_scripts": ["privgem = privgem.privgem:main",],},
 )
