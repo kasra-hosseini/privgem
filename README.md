@@ -32,44 +32,25 @@
 
 ## Installation
 
-We strongly recommend installation via Anaconda:
-
-* Refer to [Anaconda website and follow the instructions](https://docs.anaconda.com/anaconda/install/).
-
-* Create a new environment for `privgem` called `privgem_py38`:
+Install privgem
 
 ```bash
-conda create -n privgem_py38 python=3.8
+pip install git+https://github.com/kasra-hosseini/privgem.git@develop
 ```
 
-* Activate the environment:
+### Developer
+
+Install using [poetry](https://python-poetry.org/):
 
 ```bash
-conda activate privgem_py38
+poetry install
 ```
 
-* Clone `privgem` source code:
+
+### Notebooks 
+Create a kernel called `privgem` which can use the poetry environment
 
 ```bash
-git clone https://github.com/kasra-hosseini/privgem.git
+poetry run python -m ipykernel install --user --name privgem
 ```
 
-* Finally, install `privgem` library:
-
-```
-cd /path/to/privgem
-pip install -v -e .
-```
-
-Alternatively:
-
-```
-cd /path/to/privgem
-python setup.py install
-```
-
-* To allow the newly created `privgem_py38` environment to show up in Jupyter Notebook:
-
-```bash
-python -m ipykernel install --user --name privgem_py38 --display-name "Python (privgem_py38)"
-```
