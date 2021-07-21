@@ -14,9 +14,14 @@
 </p>
 
 
-- [Credits](#credits)
-- [Installation and setup](#installation)
-- :student: [Examples on how to run privgem](./examples)
+- :warning: [Credits](#credits)
+- :building_construction: [Installation and setup](#installation)
+- :student: [Tutorials](./examples) are organized in Jupyter Notebooks as follows:
+    - Tabular data:
+        - [PATE-CTGAN](./examples/PATE-CTGAN_example_001.ipynb)
+        - [DP-CTGAN](./examples/DP-CTGAN_example_001.ipynb)
+        - [CTGAN](./examples/CTGAN_example_001.ipynb)
+        - [PGM and PATE-CTGAN](./examples/artificial_and_synthetic_data.ipynb), using generated/artificial n-class classification problem
 
 ## Credits
 
@@ -54,4 +59,3 @@ Create a kernel called `privgem` which can use the poetry environment
 ```bash
 poetry run python -m ipykernel install --user --name privgem
 ```
-
