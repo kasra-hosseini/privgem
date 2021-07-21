@@ -16,6 +16,7 @@
 
 - [Credits](#credits)
 - [Installation and setup](#installation)
+- [Examples on how to run privgem](./examples)
 
 ## Credits
 
