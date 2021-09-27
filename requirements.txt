@@ -1,0 +1,10 @@
+shap
+sdv
+git+https://github.com/kasra-hosseini/CTGAN.git
+opacus==0.9.0
+torch==1.6.0
+jupyterlab
+matplotlib
+PuLP
+networkx
+dython
