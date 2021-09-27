@@ -17,6 +17,7 @@ setuptools.setup(
     platforms="OS Independent",
     python_requires='>=3.7,<3.9',
     install_requires=[
+        "rdt~=0.2.10",
         "torch~=1.6",
         "PuLP~=2.4",
         "networkx~=2.6.1",
