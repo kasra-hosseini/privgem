@@ -306,7 +306,7 @@ class dpctgan(CTGANSynthesizer):
 
                     #    print ('label_fake is {}'.format(label_fake))
 
-                    error_d_fake = criterion(y_fake, label_fake)
+                    error_d_fake = criterion(y_fake.squeeze(), label_fake)
                     error_d_fake.backward()
                     optimizer_d.step()
 
@@ -318,17 +318,17 @@ class dpctgan(CTGANSynthesizer):
                         device=self.device,
                     )
                     y_real = discriminator(real_cat)
-                    error_d_real = criterion(y_real, label_true)
+                    error_d_real = criterion(y_real.squeeze(), label_true)
                     error_d_real.backward()
                     optimizer_d.step()
 
                     loss_d = error_d_real + error_d_fake
 
                     # XXX
-                    all_fake_y.extend(y_fake.detach().cpu())
-                    all_true_y.extend(y_real.detach().cpu())
-                    all_fake_label.extend(label_fake.detach().cpu())
-                    all_true_label.extend(label_true.detach().cpu())
+                    all_fake_y.extend(y_fake.flatten().detach().cpu())
+                    all_true_y.extend(y_real.flatten().detach().cpu())
+                    all_fake_label.extend(label_fake.flatten().detach().cpu())
+                    all_true_label.extend(label_true.flatten().detach().cpu())
 
                 else:
 
@@ -386,11 +386,11 @@ class dpctgan(CTGANSynthesizer):
                         device=self.device,
                     )
                     # label_g = torch.full(int(self.batch_size/self.pack,),1,device=self.device)
-                    loss_g = criterion(y_fake, label_g)
+                    loss_g = criterion(y_fake.squeeze(), label_g)
                     loss_g = loss_g + cross_entropy
 
                     # XXX
-                    all_gen_y.extend(y_fake.detach().cpu())
+                    all_gen_y.extend(y_fake.flatten().detach().cpu())
                     all_gen_label.extend(label_g.float().detach().cpu())
                 else:
                     loss_g = -torch.mean(y_fake) + cross_entropy
