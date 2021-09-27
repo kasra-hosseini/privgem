@@ -17,12 +17,11 @@ setuptools.setup(
     platforms="OS Independent",
     python_requires='>=3.7,<3.9',
     install_requires=[
-        "rdt~=0.2.10",
+        "ctgan==0.2.2.dev1",
         "torch~=1.6",
         "PuLP~=2.4",
         "networkx~=2.6.1",
         "dython~=0.6.6",
-        "ctgan @ git+https://github.com/kasra-hosseini/CTGAN.git@privgem_develop",
         "opacus~=0.14.0",
         "shap~=0.39.0",
         "sdv",
