@@ -17,9 +17,9 @@ setuptools.setup(
     platforms="OS Independent",
     python_requires='>=3.7,<3.9',
     install_requires=[
+        "ctgan @ git+https://github.com/kasra-hosseini/CTGAN.git@privgem_develop",
         "shap",
         "sdv",
-        "ctgan @ git+https://github.com/kasra-hosseini/CTGAN.git@privgem_develop",
         "opacus==0.9.0",
         "torch>=1.6.0,<2",
         "jupyterlab",
