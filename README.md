@@ -13,14 +13,14 @@
     <br/>
 </p>
 
-:warning: [Credits](#credits)
-:building_construction: [Installation and setup](#installation)
-:student: [Tutorials](./examples) are organized in Jupyter Notebooks as follows:
-  - **Tabular data**
-      - [PATE-CTGAN](./examples/PATE-CTGAN_example_001.ipynb)
-      - [DP-CTGAN](./examples/DP-CTGAN_example_001.ipynb)
-      - [CTGAN](./examples/CTGAN_example_001.ipynb)
-      - [PGM and PATE-CTGAN](./examples/artificial_and_synthetic_data.ipynb), using generated/artificial n-class classification problem
+- :warning: [Credits](#credits)
+- :building_construction: [Installation and setup](#installation)
+- :student: [Tutorials](./examples) are organized in Jupyter Notebooks as follows:
+    - **Tabular data**
+        - [PATE-CTGAN](./examples/PATE-CTGAN_example_001.ipynb)
+        - [DP-CTGAN](./examples/DP-CTGAN_example_001.ipynb)
+        - [CTGAN](./examples/CTGAN_example_001.ipynb)
+        - [PGM and PATE-CTGAN](./examples/artificial_and_synthetic_data.ipynb), using generated/artificial n-class classification problem
 
 
 ## Credits
