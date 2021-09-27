@@ -24,7 +24,7 @@ setuptools.setup(
         "ctgan @ git+https://github.com/kasra-hosseini/CTGAN.git@privgem_develop",
         "opacus~=0.14.0",
         "shap~=0.39.0",
-        "sdv~=0.5",
+        "sdv",
         "matplotlib",
         "jupyterlab~=3.0.16",
         "jupyter-client>=6.1.5",
