@@ -17,16 +17,16 @@ setuptools.setup(
     platforms="OS Independent",
     python_requires='>=3.7,<3.9',
     install_requires=[
-        "shap",
-        "sdv",
+        "shap<0.4",
+        "sdv<0.13",
         "ctgan @ git+https://github.com/kasra-hosseini/CTGAN.git@privgem_develop",
         "opacus>=0.9.0,<1",
-        "torch>=1.6.0,<2",
-        "jupyterlab",
-        "matplotlib",
-        "PuLP",
-        "networkx",
-        "dython"
+        "torch>=1.6.0,<1.9",
+        "jupyterlab<3.2",
+        "matplotlib<3.5",
+        "PuLP<=2.5",
+        "networkx<2.7",
+        "dython<0.7"
     ],
     classifiers=[
         "Development Status :: 3 - Alpha",
