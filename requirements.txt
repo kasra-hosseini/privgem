@@ -1,4 +1,4 @@
-torch==1.6.0
+torch~=1.6
 PuLP~=2.4
 networkx~=2.6.1
 dython~=0.6.6
