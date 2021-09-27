@@ -15,9 +15,9 @@ jobs:
     - name: Install dependencies
       run: |
         python -c "import sys; print(sys.version)"
-        $CONDA/bin/pip install -r requirements.txt
+        pip install -r requirements.txt
     - name: Test with pytest
       run: |
-        $CONDA/bin/conda install pytest
-        $CONDA/bin/pip install .
-        $CONDA/bin/pytest ./privgem/tests
+        conda install pytest
+        pip install .
+        pytest ./privgem/tests
