@@ -7,6 +7,9 @@
 </div>
 
 <p align="center">
+    <a href="https://mybinder.org/v2/gh/kasra-hosseini/privgem/HEAD?filepath=examples">
+        <img alt="Binder" src="https://mybinder.org/badge_logo.svg">
+    </a>
     <a href="https://github.com/kasra-hosseini/privgem/workflows/Continuous%20integration/badge.svg">
         <img alt="Continuous integration badge" src="https://github.com/kasra-hosseini/privgem/workflows/Continuous%20integration/badge.svg">
     </a>
