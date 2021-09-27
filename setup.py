@@ -19,7 +19,7 @@ setuptools.setup(
     install_requires=[
         "shap",
         "sdv",
-        "ctgan @ git+https://github.com/kasra-hosseini/CTGAN.git",
+        "ctgan @ git+https://github.com/kasra-hosseini/CTGAN.git@privgem_develop",
         "opacus==0.9.0",
         "torch==1.6.0",
         "jupyterlab",
