@@ -21,7 +21,7 @@ setuptools.setup(
         "sdv",
         "ctgan @ git+https://github.com/kasra-hosseini/CTGAN.git",
         "opacus==0.9.0",
-        "torch==1.6.0",
+        "torch>=1.6.0,<2",
         "jupyterlab",
         "matplotlib",
         "PuLP",
