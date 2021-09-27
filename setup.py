@@ -17,7 +17,7 @@ setuptools.setup(
     platforms="OS Independent",
     python_requires='>=3.7,<3.9',
     install_requires=[
-        "shap<0.4",
+        "shap<0.40",
         "sdv<0.13",
         "ctgan @ git+https://github.com/kasra-hosseini/CTGAN.git@privgem_develop",
         "opacus>=0.9.0,<1",
