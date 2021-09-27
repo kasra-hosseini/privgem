@@ -13,6 +13,7 @@ jobs:
       with:
         python-version: 3.8
     - name: Install dependencies
+      shell: bash
       run: |
         $CONDA/bin/pip install -r requirements.txt
     - name: Test with pytest
