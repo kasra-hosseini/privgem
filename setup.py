@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="privgem",
-    version="0.1.0",
+    version="0.1.1",
     description="privgem: Privacy-Preserving Generative Models",
     author=u"Kasra Hosseini",
     license="MIT License",
@@ -15,11 +15,11 @@ setuptools.setup(
     packages = setuptools.find_packages(),
     include_package_data = True,
     platforms="OS Independent",
-    python_requires='>=3.7',
+    python_requires='>=3.7,<3.9',
     install_requires=[
         "shap",
         "sdv",
-        "git+https://github.com/kasra-hosseini/CTGAN.git",
+        "ctgan @ git+https://github.com/kasra-hosseini/CTGAN.git",
         "opacus==0.9.0",
         "torch==1.6.0",
         "jupyterlab",
