@@ -13,15 +13,15 @@
     <br/>
 </p>
 
+:warning: [Credits](#credits)
+:building_construction: [Installation and setup](#installation)
+:student: [Tutorials](./examples) are organized in Jupyter Notebooks as follows:
+  - **Tabular data**
+      - [PATE-CTGAN](./examples/PATE-CTGAN_example_001.ipynb)
+      - [DP-CTGAN](./examples/DP-CTGAN_example_001.ipynb)
+      - [CTGAN](./examples/CTGAN_example_001.ipynb)
+      - [PGM and PATE-CTGAN](./examples/artificial_and_synthetic_data.ipynb), using generated/artificial n-class classification problem
 
-- :warning: [Credits](#credits)
-- :building_construction: [Installation and setup](#installation)
-- :student: [Tutorials](./examples) are organized in Jupyter Notebooks as follows:
-    - **Tabular data**
-        - [PATE-CTGAN](./examples/PATE-CTGAN_example_001.ipynb)
-        - [DP-CTGAN](./examples/DP-CTGAN_example_001.ipynb)
-        - [CTGAN](./examples/CTGAN_example_001.ipynb)
-        - [PGM and PATE-CTGAN](./examples/artificial_and_synthetic_data.ipynb), using generated/artificial n-class classification problem
 
 ## Credits
 
@@ -38,24 +38,50 @@
 
 ## Installation
 
-Install privgem
+We strongly recommend installation via Anaconda:
+
+* Refer to [Anaconda website and follow the instructions](https://docs.anaconda.com/anaconda/install/).
+
+* Create a new environment for `privgem` called `privgem_py38`:
 
 ```bash
-pip install git+https://github.com/kasra-hosseini/privgem.git@develop
+conda create -n privgem_py38 python=3.8
 ```
 
-### Developer
-
-Install using [poetry](https://python-poetry.org/):
+* Activate the environment:
 
 ```bash
-poetry install
+conda activate privgem_py38
 ```
 
-
-### Notebooks 
-Create a kernel called `privgem` which can use the poetry environment
+* Clone `privgem` source code:
 
 ```bash
-poetry run python -m ipykernel install --user --name privgem
+git clone https://github.com/kasra-hosseini/privgem.git
+```
+
+* Install `privgem` dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+* Finally, install `privgem` library:
+
+```
+cd /path/to/privgem
+pip install -v -e .
+```
+
+Alternatively:
+
+```
+cd /path/to/privgem
+python setup.py install
+```
+
+* To allow the newly created `privgem_py38` environment to show up in Jupyter Notebook:
+
+```bash
+python -m ipykernel install --user --name privgem_py38 --display-name "Python (privgem_py38)"
 ```
