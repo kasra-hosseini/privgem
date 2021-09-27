@@ -23,6 +23,8 @@ setuptools.setup(
         "opacus>=0.9.0,<1",
         "torch>=1.6.0,<1.9",
         "jupyterlab<3.2",
+        "jupyter-client>=6.1.5",
+        "jupyter-core>=4.6.3",
         "matplotlib<3.5",
         "PuLP<=2.5",
         "networkx<2.7",
