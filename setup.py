@@ -17,7 +17,7 @@ setuptools.setup(
     platforms="OS Independent",
     python_requires='>=3.7,<3.9',
     install_requires=[
-        "ctgan==0.2.2.dev1",
+        "ctgan @ git+https://github.com/kasra-hosseini/CTGAN.git@privgem_develop",
         "torch<2",
         "PuLP<3",
         "networkx<3",
