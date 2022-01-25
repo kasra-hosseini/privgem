@@ -13,6 +13,8 @@
     <a href="https://github.com/kasra-hosseini/privgem/workflows/Continuous%20integration/badge.svg">
         <img alt="Continuous integration badge" src="https://github.com/kasra-hosseini/privgem/workflows/Continuous%20integration/badge.svg">
     </a>
+    <a href="https://zenodo.org/badge/latestdoi/343837885">
+        <img src="https://zenodo.org/badge/343837885.svg" alt="DOI"></a>
     <br/>
 </p>
 
